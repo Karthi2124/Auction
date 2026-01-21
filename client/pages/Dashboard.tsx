@@ -171,55 +171,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Live Auctions Section */}
-          {liveAuctions.length > 0 && (
-            <div className="mb-12">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                <h2 className="text-2xl font-bold text-slate-900">Live Auctions Now</h2>
-              </div>
-              <div className="space-y-4">
-                {liveAuctions.map((auction) => (
-                  <div key={auction.id} className="bg-white rounded-lg shadow-md border border-slate-100 p-6 hover:shadow-lg transition-all">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                          <span className="text-xs font-bold text-red-600">LIVE NOW</span>
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-900">{auction.name}</h3>
-                        <p className="text-sm text-slate-600 mt-1">Sport: {auction.sport}</p>
-                      </div>
-                      <button
-                        onClick={() => navigate(`/auction-panel/${auction.id}`)}
-                        className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-6 py-2.5 rounded-lg font-medium transition-all whitespace-nowrap"
-                      >
-                        Watch Live
-                      </button>
-                    </div>
-
-                    {/* Progress */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-slate-700">Progress</span>
-                        <span className="text-sm font-bold text-slate-900">{auction.progress}%</span>
-                      </div>
-                      <div className="w-full bg-slate-300 rounded-full h-2 overflow-hidden">
-                        <div
-                          className="bg-gradient-to-r from-red-500 to-orange-500 h-full rounded-full transition-all duration-500"
-                          style={{ width: `${auction.progress}%` }}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-xs text-slate-600">{auction.teams} teams participating</span>
-                        <span className="text-xs text-slate-600">{auction.timeLeft} remaining</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Upcoming Auctions Section */}
           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">

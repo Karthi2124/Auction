@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Pages
-import Index from "./pages/Index";
+// import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -31,31 +31,34 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          {/* Landing / Home */}
-          <Route path="/" element={<Index />} />
+<Routes>
 
-          {/* Authentication */}
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/otp-verification" element={<OTPVerification />} />
+  {/* Default Landing */}
+  <Route path="/" element={<SignIn />} />
 
-          {/* Dashboard & Main App */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/my-auctions" element={<MyAuctions />} />
-          <Route path="/join-auction" element={<JoinAuction />} />
-          <Route path="/create-auction" element={<CreateAuction />} />
-          <Route path="/auction-panel/:id" element={<AuctionPanel />} />
-          <Route path="/profile" element={<Profile />} />
+  {/* Authentication */}
+  <Route path="/sign-in" element={<SignIn />} />
+  <Route path="/sign-up" element={<SignUp />} />
+  <Route path="/otp-verification" element={<OTPVerification />} />
 
-          {/* Secondary Menu */}
-          <Route path="/today-auction" element={<TodayAuction />} />
-          <Route path="/upcoming-auction" element={<UpcomingAuction />} />
-          <Route path="/video-gallery" element={<VideoGallery />} />
+  {/* Dashboard & Main App */}
+  <Route path="/dashboard" element={<Dashboard />} />
+  <Route path="/my-auctions" element={<MyAuctions />} />
+  <Route path="/join-auction" element={<JoinAuction />} />
+  <Route path="/create-auction" element={<CreateAuction />} />
+  <Route path="/auction-panel/:id" element={<AuctionPanel />} />
+  <Route path="/profile" element={<Profile />} />
 
-          {/* Catch all - 404 */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+  {/* Secondary Menu */}
+  <Route path="/today-auction" element={<TodayAuction />} />
+  <Route path="/upcoming-auction" element={<UpcomingAuction />} />
+  <Route path="/video-gallery" element={<VideoGallery />} />
+
+  {/* 404 */}
+  <Route path="*" element={<NotFound />} />
+
+</Routes>
+
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

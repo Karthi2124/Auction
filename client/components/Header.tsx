@@ -32,7 +32,7 @@ export default function Header() {
             onClick={() => navigate('/dashboard')}
             className="flex items-center gap-2 hover:opacity-80 transition"
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            {/* <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <svg
                 className="w-6 h-6 text-white"
                 fill="currentColor"
@@ -40,7 +40,7 @@ export default function Header() {
               >
                 <path d="M10.5 1.5H5.75A2.25 2.25 0 003.5 3.75v12.5A2.25 2.25 0 005.75 18.5h8.5a2.25 2.25 0 002.25-2.25V8.5M16.5 2l-6 6" />
               </svg>
-            </div>
+            </div> */}
             <span className="font-bold text-xl text-slate-900 hidden sm:block">
               Auction
             </span>
