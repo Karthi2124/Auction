@@ -78,7 +78,7 @@ export default function SignUp() {
       setLoading(true);
 
 const res = await axios.post(
-  'http://localhost:5000/api/auth/signup',
+  `${API}/api/auth/signup`,
   {
     name: formData.name,
     phone: formData.phone,

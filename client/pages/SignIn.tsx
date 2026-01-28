@@ -12,46 +12,45 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError('');
 
-    if (!email || !email.includes('@')) {
-      setError('Please enter a valid email');
-      return;
-    }
+  if (!email || !email.includes('@')) {
+    setError('Please enter a valid email');
+    return;
+  }
 
-    if (!password) {
-      setError('Please enter password');
-      return;
-    }
+  if (!password) {
+    setError('Please enter password');
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const res = await axios.post(
-        'http://localhost:5000/api/auth/signin',
-        { email, password }
-      );
+const res = await axios.post(
+  `${API}/api/auth/signin`,
+  { email, password }
+);
 
-      localStorage.setItem(
-        'token',
-        res.data.token
-      );
 
-      alert('Login successful');
+    // Save token
+    localStorage.setItem('token', res.data.token);
 
-      navigate('/dashboard');
+    alert('Login successful');
+    navigate('/dashboard');
 
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.msg ||
-        'Invalid credentials'
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    setError(
+      err?.response?.data?.msg ||
+      'Invalid email or password'
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleGoogleSignIn = () => {
     alert('Google login coming soon 🙂');
