@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
 
+// ✅ Read API from Vite .env
+const API = import.meta.env.VITE_API_URL;
+
 export default function SignIn() {
   const navigate = useNavigate();
 
@@ -12,45 +15,50 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setError('');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
 
-  if (!email || !email.includes('@')) {
-    setError('Please enter a valid email');
-    return;
-  }
+    const cleanEmail = email.trim();
 
-  if (!password) {
-    setError('Please enter password');
-    return;
-  }
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setError('Please enter a valid email');
+      return;
+    }
 
-  try {
-    setLoading(true);
+    if (!password) {
+      setError('Please enter password');
+      return;
+    }
 
-const res = await axios.post(
-  `${API}/api/auth/signin`,
-  { email, password }
-);
+    try {
+      setLoading(true);
 
+      const res = await axios.post(
+        `${API}/api/auth/signin`,
+        {
+          email: cleanEmail,
+          password
+        }
+      );
 
-    // Save token
-    localStorage.setItem('token', res.data.token);
+      // ✅ Save JWT
+      localStorage.setItem('token', res.data.token);
 
-    alert('Login successful');
-    navigate('/dashboard');
+      // ✅ Redirect on success
+      navigate('/dashboard');
 
-  } catch (err) {
-    setError(
-      err?.response?.data?.msg ||
-      'Invalid email or password'
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (err) {
+      console.error('Login error:', err);
 
+      setError(
+        err?.response?.data?.message ||
+        'Invalid email or password'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleSignIn = () => {
     alert('Google login coming soon 🙂');
@@ -72,10 +80,8 @@ const res = await axios.post(
           </div>
 
           {/* FORM */}
-          <form
-            onSubmit={handleLogin}
-            className="space-y-4"
-          >
+          <form onSubmit={handleLogin} className="space-y-4">
+
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                 {error}
@@ -93,9 +99,7 @@ const res = await axios.post(
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) =>
-                    setEmail(e.target.value)
-                  }
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   className="w-full pl-10 pr-4 py-2.5 border rounded-lg"
                 />
@@ -110,24 +114,16 @@ const res = await axios.post(
 
               <div className="relative">
                 <input
-                  type={
-                    showPassword
-                      ? 'text'
-                      : 'password'
-                  }
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) =>
-                    setPassword(e.target.value)
-                  }
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full px-4 py-2.5 border rounded-lg"
                 />
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
+                  onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-3.5"
                 >
                   {showPassword ? (
@@ -148,9 +144,7 @@ const res = await axios.post(
               disabled:opacity-50 text-white font-semibold
               py-2.5 rounded-lg transition"
             >
-              {loading
-                ? 'Signing in...'
-                : 'Sign In'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
@@ -169,24 +163,22 @@ const res = await axios.post(
           {/* GOOGLE */}
           <button
             onClick={handleGoogleSignIn}
-            className="w-full border py-2.5 rounded-lg
-            hover:bg-slate-50 font-medium"
+            className="w-full border py-2.5 rounded-lg hover:bg-slate-50 font-medium"
           >
             Continue with Google
           </button>
 
           {/* SIGNUP */}
           <p className="text-center text-sm mt-6">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <button
-              onClick={() =>
-                navigate('/sign-up')
-              }
+              onClick={() => navigate('/sign-up')}
               className="text-blue-600 font-semibold"
             >
               Sign up
             </button>
           </p>
+
         </div>
       </div>
     </div>
