@@ -11,6 +11,9 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
+// ✅ API from Vite .env
+const API = import.meta.env.VITE_API_URL;
+
 export default function SignUp() {
   const navigate = useNavigate();
 
@@ -29,7 +32,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -37,34 +40,43 @@ export default function SignUp() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
+    const cleanData = {
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
+      city: formData.city.trim(),
+      password: formData.password,
+      confirmPassword: formData.confirmPassword
+    };
+
     /* VALIDATION */
     if (
-      !formData.name ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.city ||
-      !formData.password ||
-      !formData.confirmPassword
+      !cleanData.name ||
+      !cleanData.email ||
+      !cleanData.phone ||
+      !cleanData.city ||
+      !cleanData.password ||
+      !cleanData.confirmPassword
     ) {
       setError('Please fill in all fields');
       return;
     }
 
-    if (!formData.email.includes('@')) {
+    if (!cleanData.email.includes('@')) {
       setError('Please enter a valid email');
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (cleanData.password !== cleanData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (cleanData.password.length < 6) {
       setError('Password must be at least 6 characters');
       return;
     }
@@ -77,25 +89,27 @@ export default function SignUp() {
     try {
       setLoading(true);
 
-const res = await axios.post(
-  `${API}/api/auth/signup`,
-  {
-    name: formData.name,
-    phone: formData.phone,
-    email: formData.email,
-    city: formData.city,
-    password: formData.password
-  }
-);
+      const res = await axios.post(
+        `${API}/api/auth/signup`,
+        {
+          name: cleanData.name,
+          phone: cleanData.phone,
+          email: cleanData.email,
+          city: cleanData.city,
+          password: cleanData.password
+        }
+      );
 
-
-      alert(res.data.msg);
+      // ✅ Success message from backend
+      alert(res.data.message || 'Signup successful');
 
       navigate('/sign-in');
 
-    } catch (err: any) {
+    } catch (err) {
+      console.error('Signup error:', err);
+
       setError(
-        err?.response?.data?.msg ||
+        err?.response?.data?.message ||
         'Something went wrong'
       );
     } finally {
@@ -119,17 +133,14 @@ const res = await axios.post(
           </div>
 
           {/* FORM */}
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-3"
-          >
+          <form onSubmit={handleSubmit} className="space-y-3">
+
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
-            {/* NAME */}
             <InputField
               icon={<User />}
               name="name"
@@ -139,7 +150,6 @@ const res = await axios.post(
               label="Full Name"
             />
 
-            {/* PHONE */}
             <InputField
               icon={<Phone />}
               name="phone"
@@ -149,7 +159,6 @@ const res = await axios.post(
               label="Phone Number"
             />
 
-            {/* EMAIL */}
             <InputField
               icon={<Mail />}
               name="email"
@@ -160,7 +169,6 @@ const res = await axios.post(
               type="email"
             />
 
-            {/* CITY */}
             <InputField
               icon={<MapPin />}
               name="city"
@@ -170,19 +178,15 @@ const res = await axios.post(
               label="City"
             />
 
-            {/* PASSWORD */}
             <PasswordInput
               label="Password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               show={showPassword}
-              toggle={() =>
-                setShowPassword(!showPassword)
-              }
+              toggle={() => setShowPassword(!showPassword)}
             />
 
-            {/* CONFIRM PASSWORD */}
             <PasswordInput
               label="Confirm Password"
               name="confirmPassword"
@@ -190,13 +194,10 @@ const res = await axios.post(
               onChange={handleChange}
               show={showConfirmPassword}
               toggle={() =>
-                setShowConfirmPassword(
-                  !showConfirmPassword
-                )
+                setShowConfirmPassword(!showConfirmPassword)
               }
             />
 
-            {/* TERMS */}
             <div className="flex items-start gap-2 mt-4">
               <input
                 type="checkbox"
@@ -211,7 +212,6 @@ const res = await axios.post(
               </p>
             </div>
 
-            {/* SUBMIT */}
             <button
               type="submit"
               disabled={loading}
@@ -226,31 +226,25 @@ const res = await axios.post(
             </button>
           </form>
 
-          {/* SIGN IN */}
           <p className="text-center text-sm mt-6">
             Already have an account?{' '}
             <button
-              onClick={() =>
-                navigate('/sign-in')
-              }
+              onClick={() => navigate('/sign-in')}
               className="text-purple-600 font-semibold"
             >
               Sign in
             </button>
           </p>
+
         </div>
       </div>
     </div>
   );
 }
 
-/* COMPONENTS */
+/* ---------- COMPONENTS ---------- */
 
-function InputField({
-  icon,
-  label,
-  ...props
-}: any) {
+function InputField({ icon, label, ...props }) {
   return (
     <div>
       <label className="text-sm font-medium mb-1.5 block">
@@ -269,12 +263,7 @@ function InputField({
   );
 }
 
-function PasswordInput({
-  label,
-  show,
-  toggle,
-  ...props
-}: any) {
+function PasswordInput({ label, show, toggle, ...props }) {
   return (
     <div>
       <label className="text-sm font-medium mb-1.5 block">
@@ -282,23 +271,17 @@ function PasswordInput({
       </label>
       <div className="relative">
         <Lock className="absolute left-3 top-3 text-slate-400" />
-
         <input
           {...props}
           type={show ? 'text' : 'password'}
           className="w-full pl-10 pr-12 py-2.5 border rounded-lg"
         />
-
         <button
           type="button"
           onClick={toggle}
           className="absolute right-3 top-3"
         >
-          {show ? (
-            <EyeOff />
-          ) : (
-            <Eye />
-          )}
+          {show ? <EyeOff /> : <Eye />}
         </button>
       </div>
     </div>
