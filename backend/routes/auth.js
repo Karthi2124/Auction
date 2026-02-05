@@ -5,59 +5,84 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-
-// ================= SIGNUP =================
-router.post("/signup", async (req, res) => {
+/* ================= REGISTER / SIGNUP ================= */
+const registerUser = async (req, res) => {
   try {
     const { name, phone, email, city, password } = req.body;
 
     if (!name || !phone || !email || !city || !password) {
-      return res.status(400).json({ msg: "All fields required" });
+      return res.status(400).json({
+        message: "All fields are required"
+      });
     }
 
-    const userExist = await User.findOne({ email });
-    if (userExist) {
-      return res.status(400).json({ msg: "User already exists" });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already registered"
+      });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User({
       name,
       phone,
       email,
       city,
-      password: hashed
+      password: hashedPassword
     });
 
     await user.save();
 
-    res.json({ msg: "Signup success" });
+    res.status(201).json({
+      message: "User registered successfully"
+    });
 
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ msg: "Server error" });
+  } catch (error) {
+    console.error("Register error:", error);
+
+    // Duplicate key (email / phone)
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "User already exists"
+      });
+    }
+
+    res.status(500).json({
+      message: "Server error"
+    });
   }
-});
+};
+
+// Support BOTH routes
+router.post("/register", registerUser);
+router.post("/signup", registerUser);
 
 
-// ================= SIGNIN =================
+/* ================= SIGNIN ================= */
 router.post("/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ msg: "All fields required" });
+      return res.status(400).json({
+        message: "All fields are required"
+      });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).json({
+        message: "Invalid credentials"
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).json({
+        message: "Invalid credentials"
+      });
     }
 
     const token = jwt.sign(
@@ -67,13 +92,15 @@ router.post("/signin", async (req, res) => {
     );
 
     res.json({
-      msg: "Login success",
+      message: "Login success",
       token
     });
 
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ msg: "Server error" });
+  } catch (error) {
+    console.error("Signin error:", error);
+    res.status(500).json({
+      message: "Server error"
+    });
   }
 });
 
